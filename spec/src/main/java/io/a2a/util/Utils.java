@@ -1,7 +1,9 @@
 package io.a2a.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -76,8 +78,18 @@ public class Utils {
             log.fine(String.format("Appending parts to artifact id %s for task %s", artifactId, taskId));
             List<Part<?>> parts = new ArrayList<>(existingArtifact.parts());
             parts.addAll(newArtifact.parts());
+
+            Map<String, Object> metadata = new HashMap<>();
+            if (existingArtifact.metadata() != null) {
+                metadata.putAll(existingArtifact.metadata());
+            }
+            if (newArtifact.metadata() != null) {
+                metadata.putAll(newArtifact.metadata());
+            }
+
             Artifact updated = new Artifact.Builder(existingArtifact)
                     .parts(parts)
+                    .metadata(metadata)
                     .build();
             artifacts.set(existingArtifactIndex, updated);
         } else {
